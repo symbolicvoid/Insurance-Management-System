@@ -146,12 +146,28 @@ public class EventHandler {
         MainFrame.logMessage("Sorting by " + attribute + "!");
         attribute = attribute.toLowerCase();
 
-        for(int i=0; i<insurances.size(); i++){
-            for(int j=0; j<insurances.size()-1; j++){
-                if(insurances.get(j).getAttribute(attribute).compareTo(insurances.get(j+1).getAttribute(attribute)) > 0){
-                    Insurance temp = insurances.get(j);
-                    insurances.set(j, insurances.get(j+1));
-                    insurances.set(j+1, temp);
+        if(attribute.equals("premium")){
+            for(int i=0; i<insurances.size(); i++){
+                for(int j=0; j<insurances.size()-1; j++){
+                    if(Integer.parseInt(insurances.get(j).getAttribute(attribute)) >
+                            Integer.parseInt((insurances.get(j+1).getAttribute(attribute)))
+                    ){
+                        Insurance temp = insurances.get(j);
+                        insurances.set(j, insurances.get(j+1));
+                        insurances.set(j+1, temp);
+                    }
+                }
+            }
+        }
+        else{
+            for (int i = 0; i < insurances.size(); i++) {
+                for (int j = 0; j < insurances.size() - 1; j++) {
+                    if (insurances.get(j).getAttribute(attribute).compareTo(
+                            insurances.get(j + 1).getAttribute(attribute)) > 0) {
+                        Insurance temp = insurances.get(j);
+                        insurances.set(j, insurances.get(j + 1));
+                        insurances.set(j + 1, temp);
+                    }
                 }
             }
         }
