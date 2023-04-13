@@ -21,10 +21,17 @@ public class DatabaseHandler {
         }
         catch(FileNotFoundException e){
             File newFile = new File(filename);
-            if(newFile.createNewFile())
-                return null;
-            else throw new FileCannotBeCreatedException("Database files are missing and cannot be created!");
+            if(!newFile.createNewFile())
+                throw new FileCannotBeCreatedException("Database files are missing and cannot be created!");
         }
+        catch (IOException e){
+            File folder = new File("database");
+            if(!folder.exists()){
+                if(folder.mkdir())
+                    throw new FileCannotBeCreatedException("Database folder is missing and cannot be created!");
+            }
+        }
+        return null;
     }
 
     public void writeListToFile(List list) throws Exception{
