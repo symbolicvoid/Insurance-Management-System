@@ -6,6 +6,7 @@ public class EventHandler {
     public static User currentUser;
     private final UserListManager users;
     private final InsuranceListManger ins;
+    boolean userInsurancesSelected = false;
     Scanner sc;
 
     public EventHandler(){
@@ -37,16 +38,17 @@ public class EventHandler {
         else if(users.findUser(id).getAttribute("password").equals(pwd)){
             currentUser = users.findUser(id);
             MainFrame.logMessage("Successfully logged in as "+ currentUser.getAttribute("name")+"!");
-            Main.frameHandler.displayInsuranceBrowse(ins.getList());
+            displayAllInsurances();
+            Main.frameHandler.displayUserFunctions(currentUser);
         }
         else{
             MainFrame.logError("Invalid password!");
         }
-
     }
 
     public void logout(){
         currentUser = null;
+        Main.frameHandler.displayLogin();
     }
 
     public void register(String name, String pwd, String age, String gender, String contact){
@@ -65,35 +67,75 @@ public class EventHandler {
         users.addUser(newUser);
         currentUser = newUser;
         saveData();
+        displayAllInsurances();
+        Main.frameHandler.displayUserFunctions(currentUser);
+    }
+
+    public void updateUserData(int id, String name, String age, String gender, String contact){
+
+        if(isNotNumber(age)) {
+            MainFrame.logError("Age must be a number!");
+            return;
+        }
+        if(isNotNumber(contact)) {
+            MainFrame.logError("Contact number must be a number!");
+            return;
+        }
+
+        String updatedAttributes = "";
+
+        User targetUser = users.findUser(id);
+
+        if(!name.equals(targetUser.getAttribute("name"))){
+            targetUser.updateAttribute("name", name);
+            updatedAttributes += " Name";
+        }
+        if(!age.equals(targetUser.getAttribute("age"))){
+            targetUser.updateAttribute("age", age);
+            updatedAttributes += " Age";
+        }
+        if(!gender.equals(targetUser.getAttribute("gender"))){
+            targetUser.updateAttribute("gender", gender);
+            updatedAttributes += " Gender";
+        }
+        if(!contact.equals(targetUser.getAttribute("contact"))){
+            targetUser.updateAttribute("contact", contact);
+            updatedAttributes += " Contact";
+        }
+
+        if(!updatedAttributes.equals("")) {
+            MainFrame.logMessage("Updated data:" + updatedAttributes);
+            Main.frameHandler.displayUserDetails(targetUser);
+            Main.frameHandler.displayUserFunctions(currentUser);
+            saveData();
+        }
+    }
+
+    public void displayAllInsurances(){
+        userInsurancesSelected = false;
         Main.frameHandler.displayInsuranceBrowse(ins.getList());
     }
 
-    public void updateUserAttrib(){
-        System.out.println("-------------------------------------------");
-        System.out.println("Please enter the detail you wish to change!");
-        System.out.println("1 - Name");
-        System.out.println("2 - Password");
-        System.out.println("3 - Age");
-        System.out.println("4 - Gender");
-        System.out.println("5 - Contact");
-        System.out.println("Other - go back");
-        String attrib;
-        int change = sc.nextInt(); sc.nextLine();
-        switch (change) {
-            case 1: attrib = "name"; break;
-            case 2: attrib = "password"; break;
-            case 3: attrib = "age"; break;
-            case 4: attrib = "gender"; break;
-            case 5: attrib = "contact"; break;
-            default: return;
+    public void displayUserInsurances(){
+        userInsurancesSelected = true;
+        Main.frameHandler.displayInsuranceBrowse(getUserInsurances(currentUser.getKey()));
+    }
+
+    private ArrayList<Insurance> getUserInsurances(int id){
+        ArrayList<Integer> userInsurances = users.findUser(id).getInsurance();
+        ArrayList<Insurance> insurances = new ArrayList<>();
+        for(int i: userInsurances){
+            insurances.add(ins.findInsurance(i));
         }
-        System.out.println("Please enter new value for " + attrib);
-        String newValue = sc.nextLine();
-        currentUser.updateAttribute(attrib, newValue);
+        return insurances;
     }
 
     public void displaySortedInsurances(String attribute){
-        ArrayList<Insurance> insurances = new ArrayList<>(ins.getList());
+        ArrayList<Insurance> insurances;
+        if(userInsurancesSelected)
+            insurances = new ArrayList<>(getUserInsurances(currentUser.getKey()));
+        else
+            insurances = new ArrayList<>(ins.getList());
 
         if(attribute.equals("ID")){
             Main.frameHandler.displayInsuranceBrowse(insurances);
@@ -123,36 +165,21 @@ public class EventHandler {
 
     public void buyInsurance(int id){
         currentUser.addInsurance(id);
-        Main.frameHandler.deselectInsurance();
         MainFrame.logMessage("Insurance purchased successfully!");
         saveData();
     }
 
     public void cancelInsurance(int id){
         currentUser.removeInsurance(id);
-        Main.frameHandler.deselectInsurance();
         MainFrame.logMessage("Insurance removed successfully!");
         saveData();
     }
 
-    public void printUserInsurances(){
-        ArrayList<Integer> IDs = currentUser.getInsurance();
-        System.out.println("---------Purchased Insurances---------");
-        if(IDs.size() == 0){
-            System.out.println("You do not have any Insurances purchased!");
-            return;
-        }
-        for (int i: IDs){
-            ins.findInsurance(i).printDetails();
-        }
+    public void displayUserDetails(){
+        Main.frameHandler.displayUserDetails(currentUser);
     }
 
-    public void exit(){
-        System.out.println("-------------------------------------------");
-        System.out.println("Thank you for using the system! =)");
-    }
-
-    public void saveData(){
+    private void saveData(){
         try{
             users.saveList();
             ins.saveList();

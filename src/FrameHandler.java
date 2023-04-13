@@ -4,53 +4,29 @@ import java.util.ArrayList;
 
 public class FrameHandler{
     MainFrame mainFrame;
-    MiniFrame miniFrame;
 
     public static final Color BORDER_COLOR = new Color(44, 44, 47);
     public static final Color BACKGROUND_COLOR = new Color(55, 55, 55);
-
     public static final Color BROWSE_PANEL_COLOR = new Color(75,75,75);
+    public static final Color HEADER_COLOR = new Color(51, 139, 168);
+    public static final Color TEXT_COLOR = new Color(138, 199, 219);
 
-    private JPanel welcomePanel, browsePanel, detailPanel;
+    public static final Color LABEL_COLOR = new Color(87,87,92);
+
+    private JPanel welcomePanel, browsePanel, detailPanel, userPanel;
     ArrayList<JTextField> registerTextFields, loginTextFields;
 
     public FrameHandler(){
         mainFrame = new MainFrame();
-        miniFrame = new MiniFrame();
 
         registerTextFields = new ArrayList<>();
         loginTextFields = new ArrayList<>();
 
-        welcomePanelInit();
         loginPanelInit();
         registerPanelInit();
         browsePanelInit();
         detailPanelInit();
-    }
-
-    private void welcomePanelInit() {
-        welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(BORDER_COLOR, 4),
-                BorderFactory.createLineBorder(BACKGROUND_COLOR, 16)));
-
-        JPanel textPanel = new JPanel();
-        NLabel welcomeText = new NLabel("Welcome to the insurance management system!");
-        NLabel loginText = new NLabel("Please Login or Register to continue!");
-        welcomeText.setHorizontalAlignment(JLabel.CENTER);
-        loginText.setHorizontalAlignment(JLabel.CENTER);
-        textPanel.add(welcomeText);
-        textPanel.add(loginText);
-        textPanel.setBackground(BACKGROUND_COLOR);
-
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(BACKGROUND_COLOR);
-        NButton loginButton = new NButton("Login");
-        NButton registerButton = new NButton("Register");
-        buttonPanel.add(loginButton);
-        buttonPanel.add(registerButton);
-
-        welcomePanel.add(textPanel);
-        welcomePanel.add(buttonPanel, BorderLayout.SOUTH);
+        userPanelInit();
     }
 
     private JPanel createRegisterTextField(String text, ArrayList<JTextField> al){
@@ -71,7 +47,7 @@ public class FrameHandler{
         return panel;
     }
     private void loginPanelInit(){
-        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         loginPanel.setBackground(BACKGROUND_COLOR);
         loginPanel.setBorder(BorderFactory.createLineBorder(BACKGROUND_COLOR, 50));
 
@@ -81,16 +57,18 @@ public class FrameHandler{
         head.setHorizontalAlignment(JLabel.CENTER);
 
         NButton login = new NButton("Login!");
+        NButton register = new NButton("Register");
 
         loginPanel.add(head);
         loginPanel.add(createRegisterTextField("User ID", loginTextFields));
         loginPanel.add(createRegisterTextField("Password", loginTextFields));
         loginPanel.add(login);
+        loginPanel.add(register);
         mainFrame.middlePanel.add(loginPanel, "login");
     }
 
     private void registerPanelInit(){
-        JPanel registerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
+        JPanel registerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         registerPanel.setBackground(BACKGROUND_COLOR);
         registerPanel.setBorder(BorderFactory.createLineBorder(BACKGROUND_COLOR, 20));
 
@@ -100,6 +78,7 @@ public class FrameHandler{
         head.setHorizontalAlignment(JLabel.CENTER);
 
         NButton register = new NButton("Register!");
+        NButton login = new NButton("Login");
 
         registerPanel.add(head);
         registerPanel.add(createRegisterTextField("Full name", registerTextFields));
@@ -108,6 +87,7 @@ public class FrameHandler{
         registerPanel.add(createRegisterTextField("Gender", registerTextFields));
         registerPanel.add(createRegisterTextField("Contact Number", registerTextFields));
         registerPanel.add(register);
+        registerPanel.add(login);
         mainFrame.middlePanel.add(registerPanel, "register");
     }
 
@@ -131,8 +111,20 @@ public class FrameHandler{
         mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
     }
 
+    private void userPanelInit(){
+        userPanel = new JPanel();
+        userPanel.setBorder(BorderFactory.createLineBorder(BACKGROUND_COLOR, 20));
+        userPanel.setPreferredSize(new Dimension(900, 100));
+        userPanel.setBackground(BACKGROUND_COLOR);
+
+        mainFrame.topPanel.add(userPanel, "user");
+        mainFrame.getTopCard().show(mainFrame.topPanel, "none");
+    }
+
     private void putInsurancesToPanel(ArrayList<Insurance> insurances){
         browsePanel.removeAll();
+        browsePanel.revalidate();
+        browsePanel.repaint();
 
         if(insurances.size() == 0){
             MainFrame.logError("No insurances found in the database!");
@@ -146,26 +138,31 @@ public class FrameHandler{
         }
     }
 
-    public void displayWelcome(){
-        miniFrame.add(welcomePanel);
-        miniFrame.setVisible(true);
+    private void clearTextFields(ArrayList<JTextField> textFields){
+        for(JTextField tf: textFields){
+            tf.setText("");
+        }
     }
 
     public void displayLogin(){
-        miniFrame.setVisible(false);
+        clearTextFields(loginTextFields);
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
+        mainFrame.getTopCard().show(mainFrame.topPanel, "none");
         EventListener.activeTextFields = loginTextFields;
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "login");
         mainFrame.setVisible(true);
     }
 
     public void displayRegister(){
-        miniFrame.setVisible(false);
+        clearTextFields(registerTextFields);
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
+        mainFrame.getTopCard().show(mainFrame.topPanel, "none");
         EventListener.activeTextFields = registerTextFields;
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "register");
         mainFrame.setVisible(true);
     }
 
-    public void deselectInsurance(){
+    public void deselectDetails(){
         mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
     }
 
@@ -175,10 +172,25 @@ public class FrameHandler{
         browsePanel.validate();
     }
 
+    public void displayUserFunctions(User currentUser){
+        userPanel.removeAll();
+        userPanel.add(new UserFunctionPanel(currentUser));
+        mainFrame.getTopCard().show(mainFrame.topPanel, "user");
+        userPanel.validate();
+    }
+
     public void displayInsuranceDetails(Insurance insurance, boolean isPurchased){
         InsuranceDetailsPanel idp = new InsuranceDetailsPanel(insurance, isPurchased);
         detailPanel.removeAll();
         detailPanel.add(idp);
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "insurance");
+        detailPanel.validate();
+    }
+
+    public void displayUserDetails(User user){
+        UserDetailsPanel udp = new UserDetailsPanel(user);
+        detailPanel.removeAll();
+        detailPanel.add(udp);
         mainFrame.getRightCard().show(mainFrame.rightPanel, "insurance");
         detailPanel.validate();
     }
