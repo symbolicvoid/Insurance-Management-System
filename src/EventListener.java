@@ -5,11 +5,10 @@ import java.util.ArrayList;
 
 public class EventListener implements ActionListener {
 
-    private final EventHandler eventHandler;
+    private final EventHandler eventHandler = new EventHandler();
     public static ArrayList<JTextField> activeTextFields;
 
-    public EventListener() throws Exception {
-        eventHandler = new EventHandler();
+    public EventListener(){
         activeTextFields = new ArrayList<>();
     }
 
@@ -50,5 +49,9 @@ public class EventListener implements ActionListener {
                 MainFrame.logError("Feature not implemented yet!");
                 break;
         }
+    }
+
+    public void infoLabelClicked(String attribute){
+        eventHandler.displaySortedInsurances(attribute);
     }
 }

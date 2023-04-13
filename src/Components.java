@@ -1,10 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 class MainFrame extends JFrame {
 
     public JPanel masterPanel, topPanel, middlePanel, middleMasterPanel, rightPanel, msgPanel;
-    private static JLabel msgLabel;
+    private static final JLabel msgLabel = new JLabel();
 
     MainFrame(){
         super();
@@ -13,7 +15,6 @@ class MainFrame extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        msgLabel = new JLabel();
         msgLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
         msgLabel.setVerticalAlignment(JLabel.CENTER);
         msgLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -102,6 +103,7 @@ class NButton extends JButton{
         this.addActionListener(Main.eventListener);
         this.setFocusable(false);
         this.setPreferredSize(new Dimension(100, 30));
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
 }
 
@@ -129,7 +131,7 @@ class InsurancePanel extends JPanel{
     InsurancePanel(int id_, Insurance ins){
         super(new FlowLayout(FlowLayout.CENTER,0,0));
         this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
-        this.setPreferredSize(new Dimension(625, 25));
+        this.setPreferredSize(new Dimension(625, 28));
 
         name = new JLabel(ins.getAttribute("name"), SwingConstants.CENTER);
         company = new JLabel(ins.getAttribute("company"), SwingConstants.CENTER);
@@ -157,29 +159,29 @@ class InsurancePanel extends JPanel{
         label.setBackground(insuranceAttribColor);
         label.setForeground(insuranceTextColor);
         label.setOpaque(true);
-        label.setBorder(BorderFactory.createLineBorder(FrameHandler.BROWSE_PANEL_COLOR, 1));
-
+        //label.setBorder(BorderFactory.createLineBorder(FrameHandler.BROWSE_PANEL_COLOR, 1));
+        label.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, FrameHandler.BROWSE_PANEL_COLOR));
         this.add(label);
     }
 }
 
-class InfoPanel extends JPanel{
+class InfoPanel extends JPanel implements MouseListener {
     public static Color infoAttribColor = new Color(67,67,75);
     public static Color infoTextColor = new Color(51, 139, 168);
 
     JLabel id, l1, l2, l3, l4, l5;
 
-    InfoPanel(String text1, String text2, String text3, String text4, String text5){
+    InfoPanel(){
         super(new FlowLayout(FlowLayout.CENTER, 0, 0));
         this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
-        this.setPreferredSize(new Dimension(625, 40));
+        this.setPreferredSize(new Dimension(625, 45));
 
         id = new JLabel("ID", SwingConstants.CENTER);
-        l1 = new JLabel(text1, SwingConstants.CENTER);
-        l2 = new JLabel(text2, SwingConstants.CENTER);
-        l3 = new JLabel(text3, SwingConstants.CENTER);
-        l4 = new JLabel(text4, SwingConstants.CENTER);
-        l5 = new JLabel(text5, SwingConstants.CENTER);
+        l1 = new JLabel("Name", SwingConstants.CENTER);
+        l2 = new JLabel("Company", SwingConstants.CENTER);
+        l3 = new JLabel("Premium", SwingConstants.CENTER);
+        l4 = new JLabel("Amount", SwingConstants.CENTER);
+        l5 = new JLabel("Duration", SwingConstants.CENTER);
 
         id.setPreferredSize(new Dimension(25, 40));
         l1.setPreferredSize(new Dimension(250, 40));
@@ -200,8 +202,23 @@ class InfoPanel extends JPanel{
         label.setBackground(infoAttribColor);
         label.setForeground(infoTextColor);
         label.setOpaque(true);
-        label.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+        label.setBorder(BorderFactory.createRaisedBevelBorder());
+        label.addMouseListener(this);
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         this.add(label);
     }
+
+    public void mouseClicked(MouseEvent e) {
+        JLabel label = (JLabel) e.getSource();
+        Main.eventListener.infoLabelClicked(label.getText());
+    }
+
+    public void mousePressed(MouseEvent e) {}
+
+    public void mouseReleased(MouseEvent e) {}
+
+    public void mouseEntered(MouseEvent e) {}
+
+    public void mouseExited(MouseEvent e) {}
 }

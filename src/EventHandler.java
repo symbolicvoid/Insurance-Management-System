@@ -92,8 +92,29 @@ public class EventHandler {
         currentUser.updateAttribute(attrib, newValue);
     }
 
-    public ArrayList<Insurance> getSortedInsurances(){
-        return null;
+    public void displaySortedInsurances(String attribute){
+        ArrayList<Insurance> insurances = new ArrayList<>(ins.getList());
+
+        if(attribute.equals("ID")){
+            Main.frameHandler.displayInsuranceBrowse(insurances);
+            MainFrame.logMessage("Sorting set to none!");
+            return;
+        }
+
+        MainFrame.logMessage("Sorting by " + attribute + "!");
+        attribute = attribute.toLowerCase();
+
+        for(int i=0; i<insurances.size(); i++){
+            for(int j=0; j<insurances.size()-1; j++){
+                if(insurances.get(j).getAttribute(attribute).compareTo(insurances.get(j+1).getAttribute(attribute)) > 0){
+                    Insurance temp = insurances.get(j);
+                    insurances.set(j, insurances.get(j+1));
+                    insurances.set(j+1, temp);
+                }
+            }
+        }
+
+        Main.frameHandler.displayInsuranceBrowse(insurances);
     }
 
     public void buyInsurance(){

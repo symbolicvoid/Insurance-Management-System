@@ -113,9 +113,11 @@ public class FrameHandler{
     private void browsePanelInit(){
         JPanel browseMaster = new JPanel(new BorderLayout());
         browseMaster.setPreferredSize(new Dimension(600, 500));
-        browseMaster.add(new InfoPanel("Name", "Company", "Premium", "Amount", "Duration"), BorderLayout.NORTH);
+        browseMaster.add(new InfoPanel(), BorderLayout.NORTH);
+
         browsePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,0));
         browsePanel.setBackground(BROWSE_PANEL_COLOR);
+
         browseMaster.add(browsePanel, BorderLayout.CENTER);
         mainFrame.middlePanel.add(browseMaster, "browse");
     }
