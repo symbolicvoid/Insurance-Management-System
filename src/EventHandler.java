@@ -117,24 +117,22 @@ public class EventHandler {
         Main.frameHandler.displayInsuranceBrowse(insurances);
     }
 
-    public void buyInsurance(){
-        System.out.println("-------------------------------------");
-        System.out.println("Enter insurance ID to purchase!");
-        int id = sc.nextInt(); sc.nextLine();
-        if(ins.findInsurance(id) == null)
-            System.out.println("Insurance does not exist!");
-        else{
-            currentUser.addInsurance(id);
-            System.out.println("Insurance purchased successfully!");
-        }
+    public void displayInsuranceDetails(int id){
+        Main.frameHandler.displayInsuranceDetails(ins.findInsurance(id), currentUser.getInsurance().contains(id));
     }
 
-    public void cancelInsurance(){
-        System.out.println("-------------------------------------------");
-        System.out.println("Enter insurance ID to remove from account");
-        int id = sc.nextInt(); sc.nextLine();
+    public void buyInsurance(int id){
+        currentUser.addInsurance(id);
+        Main.frameHandler.deselectInsurance();
+        MainFrame.logMessage("Insurance purchased successfully!");
+        saveData();
+    }
+
+    public void cancelInsurance(int id){
         currentUser.removeInsurance(id);
-        System.out.println("Insurance removed successfully!");
+        Main.frameHandler.deselectInsurance();
+        MainFrame.logMessage("Insurance removed successfully!");
+        saveData();
     }
 
     public void printUserInsurances(){

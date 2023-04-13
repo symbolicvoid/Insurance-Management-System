@@ -54,4 +54,20 @@ public class EventListener implements ActionListener {
     public void infoLabelClicked(String attribute){
         eventHandler.displaySortedInsurances(attribute);
     }
+
+    public void insuranceSelected(int id){
+        eventHandler.displayInsuranceDetails(id);
+    }
+
+    public void buyInsurance(int id){
+        eventHandler.buyInsurance(id);
+    }
+
+    public void cancelInsurance(int id){
+        eventHandler.cancelInsurance(id);
+    }
+
+    public void deselectInsurance(){
+        Main.frameHandler.deselectInsurance();
+    }
 }

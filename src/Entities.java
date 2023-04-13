@@ -20,16 +20,12 @@ class User extends StoredObj{
     public void addInsurance(int insuranceID){
         if(!insuranceIDs.contains(insuranceID))
             insuranceIDs.add(insuranceID);
-        else
-            System.out.println("Insurance is already purchased!");
     }
 
     public void removeInsurance(int insuranceID){
         int index = insuranceIDs.indexOf(insuranceID);
         if(index != -1)
             insuranceIDs.remove(index);
-        else
-            System.out.println("Insurance is not purchased!");
     }
 
     @Override

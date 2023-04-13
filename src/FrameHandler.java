@@ -11,7 +11,7 @@ public class FrameHandler{
 
     public static final Color BROWSE_PANEL_COLOR = new Color(75,75,75);
 
-    private JPanel welcomePanel, browsePanel;
+    private JPanel welcomePanel, browsePanel, detailPanel;
     ArrayList<JTextField> registerTextFields, loginTextFields;
 
     public FrameHandler(){
@@ -25,6 +25,7 @@ public class FrameHandler{
         loginPanelInit();
         registerPanelInit();
         browsePanelInit();
+        detailPanelInit();
     }
 
     private void welcomePanelInit() {
@@ -122,6 +123,14 @@ public class FrameHandler{
         mainFrame.middlePanel.add(browseMaster, "browse");
     }
 
+    private void detailPanelInit(){
+        detailPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        detailPanel.setPreferredSize(new Dimension(250, 800));
+        detailPanel.setBackground(BACKGROUND_COLOR);
+        mainFrame.rightPanel.add(detailPanel, "insurance");
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
+    }
+
     private void putInsurancesToPanel(ArrayList<Insurance> insurances){
         browsePanel.removeAll();
 
@@ -156,9 +165,21 @@ public class FrameHandler{
         mainFrame.setVisible(true);
     }
 
+    public void deselectInsurance(){
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
+    }
+
     public void displayInsuranceBrowse(ArrayList<Insurance> insurances){
         putInsurancesToPanel(insurances);
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "browse");
-        mainFrame.setVisible(true);
+        browsePanel.validate();
+    }
+
+    public void displayInsuranceDetails(Insurance insurance, boolean isPurchased){
+        InsuranceDetailsPanel idp = new InsuranceDetailsPanel(insurance, isPurchased);
+        detailPanel.removeAll();
+        detailPanel.add(idp);
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "insurance");
+        detailPanel.validate();
     }
 }

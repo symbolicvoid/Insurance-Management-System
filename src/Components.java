@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,6 +17,10 @@ class MainFrame extends JFrame {
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        JPanel emptyRight = new JPanel();
+        emptyRight.setPreferredSize(new Dimension(250, 800));
+        emptyRight.setBackground(FrameHandler.BACKGROUND_COLOR);
+
         msgLabel.setFont(new Font("Times New Roman", Font.BOLD, 15));
         msgLabel.setVerticalAlignment(JLabel.CENTER);
         msgLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -27,7 +33,7 @@ class MainFrame extends JFrame {
         msgPanel = new JPanel(new GridLayout(1, 1));
 
         topPanel.setPreferredSize(new Dimension(900, 100));
-        rightPanel.setPreferredSize(new Dimension(250, 900));
+        rightPanel.setPreferredSize(new Dimension(250, 800));
         middlePanel.setPreferredSize(new Dimension(650,465));
         msgPanel.setPreferredSize(new Dimension(600, 35));
 
@@ -50,6 +56,8 @@ class MainFrame extends JFrame {
         masterPanel.add(topPanel, BorderLayout.NORTH);
         masterPanel.add(rightPanel, BorderLayout.EAST);
         masterPanel.add(middleMasterPanel, BorderLayout.CENTER);
+
+        rightPanel.add(emptyRight,"none");
 
         this.add(masterPanel);
     }
@@ -105,6 +113,16 @@ class NButton extends JButton{
         this.setPreferredSize(new Dimension(100, 30));
         this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
     }
+
+    public NButton(String text, ActionListener listener){
+        super(text);
+        this.setBackground(BUTTON_COLOR);
+        this.setForeground(TEXT_COLOR);
+        this.addActionListener(listener);
+        this.setFocusable(false);
+        this.setPreferredSize(new Dimension(100, 30));
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
 }
 
 class NLabel extends JLabel{
@@ -122,16 +140,19 @@ class NLabel extends JLabel{
     }
 }
 
-class InsurancePanel extends JPanel{
+class InsurancePanel extends JPanel implements MouseListener{
     public static Color insuranceAttribColor = new Color(87,87,92);
     public static Color insuranceTextColor = new Color(138, 199, 219);
 
+    int insuranceID;
     JLabel id, name, company, premium, amount, duration;
 
     InsurancePanel(int id_, Insurance ins){
         super(new FlowLayout(FlowLayout.CENTER,0,0));
         this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
         this.setPreferredSize(new Dimension(625, 28));
+
+        insuranceID = ins.getKey();
 
         name = new JLabel(ins.getAttribute("name"), SwingConstants.CENTER);
         company = new JLabel(ins.getAttribute("company"), SwingConstants.CENTER);
@@ -147,6 +168,9 @@ class InsurancePanel extends JPanel{
         amount.setPreferredSize(new Dimension(100, 25));
         duration.setPreferredSize(new Dimension(100, 25));
 
+        name.addMouseListener(this);
+        name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
         labelInit(id);
         labelInit(name);
         labelInit(company);
@@ -159,10 +183,26 @@ class InsurancePanel extends JPanel{
         label.setBackground(insuranceAttribColor);
         label.setForeground(insuranceTextColor);
         label.setOpaque(true);
-        //label.setBorder(BorderFactory.createLineBorder(FrameHandler.BROWSE_PANEL_COLOR, 1));
         label.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, FrameHandler.BROWSE_PANEL_COLOR));
         this.add(label);
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Main.eventListener.insuranceSelected(this.insuranceID);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }
 
 class InfoPanel extends JPanel implements MouseListener {
@@ -221,4 +261,89 @@ class InfoPanel extends JPanel implements MouseListener {
     public void mouseEntered(MouseEvent e) {}
 
     public void mouseExited(MouseEvent e) {}
+}
+
+class InsuranceDetailsPanel extends JPanel implements ActionListener{
+
+    int insuranceID;
+    JLabel head, company, premium, amount, duration;
+    JPanel buttonPanel;
+    NButton purchase, cancel, deselect;
+
+    InsuranceDetailsPanel(Insurance insurance, boolean isPurchased){
+        super(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        this.setPreferredSize(new Dimension(250, 800));
+
+        insuranceID = insurance.getKey();
+
+        head = new JLabel(insurance.getAttribute("name"), SwingConstants.CENTER);
+        head.setPreferredSize(new Dimension(250, 100));
+        head.setBackground(InfoPanel.infoAttribColor);
+        head.setForeground(InfoPanel.infoTextColor);
+        head.setOpaque(true);
+        head.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        head.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+        this.add(head);
+
+        JPanel empty = new JPanel();
+        empty.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        empty.setPreferredSize(new Dimension(250, 20));
+        this.add(empty);
+
+        company = new JLabel("Company: "+insurance.getAttribute("company"), SwingConstants.CENTER);
+        premium = new JLabel("Premium: "+insurance.getAttribute("premium"), SwingConstants.CENTER);
+        amount = new JLabel("Amount: "+insurance.getAttribute("amount"), SwingConstants.CENTER);
+        duration = new JLabel("Duration: "+insurance.getAttribute("duration"), SwingConstants.CENTER);
+
+        initLabel(company);
+        initLabel(premium);
+        initLabel(amount);
+        initLabel(duration);
+
+        purchase = new NButton("Purchase", this);
+        cancel = new NButton("Cancel", this);
+        deselect = new NButton("Deselect", this);
+
+        if(isPurchased){
+            purchase.setEnabled(false);
+            cancel.setEnabled(true);
+        }
+        else{
+            purchase.setEnabled(true);
+            cancel.setEnabled(false);
+        }
+        buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        buttonPanel.add(purchase);
+        buttonPanel.add(cancel);
+        buttonPanel.add(deselect);
+        buttonPanel.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        buttonPanel.setPreferredSize(new Dimension(250, 100));
+        this.add(buttonPanel);
+    }
+
+    private void initLabel(JLabel label){
+        label.setPreferredSize(new Dimension(250, 30));
+        label.setForeground(InsurancePanel.insuranceTextColor);
+        label.setBackground(InsurancePanel.insuranceAttribColor);
+        label.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+        label.setOpaque(true);
+
+        this.add(label);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch(e.getActionCommand()){
+            case "Purchase":
+                Main.eventListener.buyInsurance(insuranceID);
+                break;
+            case "Cancel":
+                Main.eventListener.cancelInsurance(insuranceID);
+                break;
+            case "Deselect":
+                Main.eventListener.deselectInsurance();
+                break;
+        }
+    }
 }
