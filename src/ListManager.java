@@ -6,7 +6,7 @@ class UserListManager{
     ArrayList<User> list;
     DatabaseHandler dh;
 
-    public UserListManager(){
+    public UserListManager() throws Exception{
         list = new ArrayList<>();
         dh = new DatabaseHandler("database/users.ser");
     }
@@ -48,7 +48,7 @@ class InsuranceListManger{
     ArrayList<Insurance> list;
     DatabaseHandler dh;
 
-    public InsuranceListManger(){
+    public InsuranceListManger() throws Exception{
         list = new ArrayList<>();
         dh = new DatabaseHandler("database/insurance.ser");
     }

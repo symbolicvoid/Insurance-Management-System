@@ -5,25 +5,25 @@ import java.util.ArrayList;
 public class FrameHandler{
     MainFrame mainFrame;
 
-    public static final Color BORDER_COLOR = new Color(44, 44, 47);
     public static final Color BACKGROUND_COLOR = new Color(55, 55, 55);
     public static final Color BROWSE_PANEL_COLOR = new Color(75,75,75);
     public static final Color HEADER_COLOR = new Color(51, 139, 168);
     public static final Color TEXT_COLOR = new Color(138, 199, 219);
-
     public static final Color LABEL_COLOR = new Color(87,87,92);
 
-    private JPanel welcomePanel, browsePanel, detailPanel, userPanel;
-    ArrayList<JTextField> registerTextFields, loginTextFields;
+    private JPanel browsePanel, detailPanel, userPanel;
+    ArrayList<JTextField> registerTextFields, loginTextFields, newInsuranceFields;
 
     public FrameHandler(){
         mainFrame = new MainFrame();
 
         registerTextFields = new ArrayList<>();
         loginTextFields = new ArrayList<>();
+        newInsuranceFields = new ArrayList<>();
 
         loginPanelInit();
         registerPanelInit();
+        addInsurancePanelInit();
         browsePanelInit();
         detailPanelInit();
         userPanelInit();
@@ -34,7 +34,7 @@ public class FrameHandler{
         panel.setPreferredSize(new Dimension(600, 35));
         panel.setBackground(BACKGROUND_COLOR);
 
-        NLabel label = new NLabel(text);
+        NLabel label = new NLabel(text+":");
         label.setPreferredSize(new Dimension(100, 20));
 
         JTextField textField = new JTextField();
@@ -91,6 +91,30 @@ public class FrameHandler{
         mainFrame.middlePanel.add(registerPanel, "register");
     }
 
+    private void addInsurancePanelInit(){
+        JPanel newInsurancePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        newInsurancePanel.setBackground(BACKGROUND_COLOR);
+        newInsurancePanel.setBorder(BorderFactory.createLineBorder(BACKGROUND_COLOR, 20));
+
+        NLabel head = new NLabel("New Insurance", 50);
+        head.setPreferredSize(new Dimension(600, 70));
+        head.setVerticalAlignment(JLabel.TOP);
+        head.setHorizontalAlignment(JLabel.CENTER);
+
+        NButton register = new NButton("Add");
+        NButton login = new NButton("Cancel");
+
+        newInsurancePanel.add(head);
+        newInsurancePanel.add(createRegisterTextField("Name", newInsuranceFields));
+        newInsurancePanel.add(createRegisterTextField("Company", newInsuranceFields));
+        newInsurancePanel.add(createRegisterTextField("Premium", newInsuranceFields));
+        newInsurancePanel.add(createRegisterTextField("Amount", newInsuranceFields));
+        newInsurancePanel.add(createRegisterTextField("Duration", newInsuranceFields));
+        newInsurancePanel.add(register);
+        newInsurancePanel.add(login);
+        mainFrame.middlePanel.add(newInsurancePanel, "newInsurance");
+    }
+
     private void browsePanelInit(){
         JPanel browseMaster = new JPanel(new BorderLayout());
         browseMaster.setPreferredSize(new Dimension(600, 500));
@@ -107,7 +131,8 @@ public class FrameHandler{
         detailPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         detailPanel.setPreferredSize(new Dimension(250, 800));
         detailPanel.setBackground(BACKGROUND_COLOR);
-        mainFrame.rightPanel.add(detailPanel, "insurance");
+        mainFrame.rightPanel.add(detailPanel, "details");
+        mainFrame.rightPanel.add(new AdminCommandPanel(), "admin");
         mainFrame.getRightCard().show(mainFrame.rightPanel, "none");
     }
 
@@ -127,7 +152,7 @@ public class FrameHandler{
         browsePanel.repaint();
 
         if(insurances.size() == 0){
-            MainFrame.logError("No insurances found in the database!");
+            MainFrame.logError("No insurances found!");
             return;
         }
 
@@ -150,7 +175,6 @@ public class FrameHandler{
         mainFrame.getTopCard().show(mainFrame.topPanel, "none");
         EventListener.activeTextFields = loginTextFields;
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "login");
-        mainFrame.setVisible(true);
     }
 
     public void displayRegister(){
@@ -159,7 +183,12 @@ public class FrameHandler{
         mainFrame.getTopCard().show(mainFrame.topPanel, "none");
         EventListener.activeTextFields = registerTextFields;
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "register");
-        mainFrame.setVisible(true);
+    }
+
+    public void displayNewInsurance(){
+        clearTextFields(newInsuranceFields);
+        EventListener.activeTextFields = newInsuranceFields;
+        mainFrame.getMiddleCard().show(mainFrame.middlePanel, "newInsurance");
     }
 
     public void deselectDetails(){
@@ -183,7 +212,7 @@ public class FrameHandler{
         InsuranceDetailsPanel idp = new InsuranceDetailsPanel(insurance, isPurchased);
         detailPanel.removeAll();
         detailPanel.add(idp);
-        mainFrame.getRightCard().show(mainFrame.rightPanel, "insurance");
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "details");
         detailPanel.validate();
     }
 
@@ -191,7 +220,11 @@ public class FrameHandler{
         UserDetailsPanel udp = new UserDetailsPanel(user);
         detailPanel.removeAll();
         detailPanel.add(udp);
-        mainFrame.getRightCard().show(mainFrame.rightPanel, "insurance");
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "details");
         detailPanel.validate();
+    }
+
+    public void displayAdminFunctions(){
+        mainFrame.getRightCard().show(mainFrame.rightPanel, "admin");
     }
 }

@@ -64,6 +64,8 @@ class MainFrame extends JFrame {
         topPanel.add(emptyTop,"none");
 
         this.add(masterPanel);
+
+        this.setVisible(true);
     }
 
     public CardLayout getMiddleCard(){
@@ -146,17 +148,17 @@ class InsurancePanel extends JPanel implements MouseListener{
 
         name = new JLabel(ins.getAttribute("name"), SwingConstants.CENTER);
         company = new JLabel(ins.getAttribute("company"), SwingConstants.CENTER);
-        premium = new JLabel(ins.getAttribute("premium"), SwingConstants.CENTER);
-        amount = new JLabel(ins.getAttribute("amount"), SwingConstants.CENTER);
-        duration = new JLabel(ins.getAttribute("duration"), SwingConstants.CENTER);
+        premium = new JLabel("Rs. "+processAmount(ins.getAttribute("premium")), SwingConstants.CENTER);
+        amount = new JLabel("Rs. "+processAmount(ins.getAttribute("amount")), SwingConstants.CENTER);
+        duration = new JLabel(ins.getAttribute("duration") + " years", SwingConstants.CENTER);
         id = new JLabel(id_+"", SwingConstants.CENTER);
 
         id.setPreferredSize(new Dimension(25, 25));
-        name.setPreferredSize(new Dimension(250, 25));
+        name.setPreferredSize(new Dimension(225, 25));
         company.setPreferredSize(new Dimension(75,25));
-        premium.setPreferredSize(new Dimension(75,25));
-        amount.setPreferredSize(new Dimension(100, 25));
-        duration.setPreferredSize(new Dimension(100, 25));
+        premium.setPreferredSize(new Dimension(100,25));
+        amount.setPreferredSize(new Dimension(125, 25));
+        duration.setPreferredSize(new Dimension(75, 25));
 
         name.addMouseListener(this);
         name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -175,6 +177,20 @@ class InsurancePanel extends JPanel implements MouseListener{
         label.setOpaque(true);
         label.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, FrameHandler.BROWSE_PANEL_COLOR));
         this.add(label);
+    }
+
+    private String processAmount(String amount){
+        StringBuilder result = new StringBuilder();
+        int count = 3;
+        for(int i = amount.length() - 1; i >= 0; i--){
+            result.insert(0, amount.charAt(i));
+            count--;
+            if(count == 0 && i != 0){
+                result.insert(0, ",");
+                count = 2;
+            }
+        }
+        return result.toString();
     }
 
     @Override
@@ -212,10 +228,43 @@ class InfoPanel extends JPanel implements MouseListener {
         l5 = new JLabel("Duration", SwingConstants.CENTER);
 
         id.setPreferredSize(new Dimension(25, 40));
-        l1.setPreferredSize(new Dimension(250, 40));
+        l1.setPreferredSize(new Dimension(225, 40));
         l2.setPreferredSize(new Dimension(75, 40));
+        l3.setPreferredSize(new Dimension(100,40));
+        l4.setPreferredSize(new Dimension(125,40));
+        l5.setPreferredSize(new Dimension(75, 40));
+
+        labelInit(id);
+        labelInit(l1);
+        labelInit(l2);
+        labelInit(l3);
+        labelInit(l4);
+        labelInit(l5);
+    }
+
+    InfoPanel(boolean isAdminRequest){
+        super(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+        if(!isAdminRequest) {
+            MainFrame.logError("Only admins can access this!");
+            return;
+        }
+
+        this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        this.setPreferredSize(new Dimension(625, 45));
+
+        id = new JLabel("ID", SwingConstants.CENTER);
+        l1 = new JLabel("Name", SwingConstants.CENTER);
+        l2 = new JLabel("Age", SwingConstants.CENTER);
+        l3 = new JLabel("Gender", SwingConstants.CENTER);
+        l4 = new JLabel("Contact", SwingConstants.CENTER);
+        l5 = new JLabel("Admin", SwingConstants.CENTER);
+
+        id.setPreferredSize(new Dimension(25, 40));
+        l1.setPreferredSize(new Dimension(250, 40));
+        l2.setPreferredSize(new Dimension(50, 40));
         l3.setPreferredSize(new Dimension(75,40));
-        l4.setPreferredSize(new Dimension(100,40));
+        l4.setPreferredSize(new Dimension(125,40));
         l5.setPreferredSize(new Dimension(100, 40));
 
         labelInit(id);
@@ -281,10 +330,10 @@ class InsuranceDetailsPanel extends JPanel implements ActionListener{
         empty2.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
         empty2.setPreferredSize(new Dimension(250, 30));
 
-        this.add(createTextFieldPanel("Company", insurance.getAttribute("company")));
-        this.add(createTextFieldPanel("Premium", insurance.getAttribute("premium")));
-        this.add(createTextFieldPanel("Amount", insurance.getAttribute("amount")));
-        this.add(createTextFieldPanel("Duration", insurance.getAttribute("duration")));
+        this.add(createTextFieldPanel("Company:", insurance.getAttribute("company")));
+        this.add(createTextFieldPanel("Premium:", processAmount(insurance.getAttribute("premium"))));
+        this.add(createTextFieldPanel("Amount:", processAmount(insurance.getAttribute("amount"))));
+        this.add(createTextFieldPanel("Duration:", insurance.getAttribute("duration") + " years"));
 
         purchase = new NButton("Purchase", this);
         cancel = new NButton("Cancel", this);
@@ -343,6 +392,20 @@ class InsuranceDetailsPanel extends JPanel implements ActionListener{
                 Main.eventListener.deselectDetails();
                 break;
         }
+    }
+
+    private String processAmount(String amount){
+        StringBuilder result = new StringBuilder(" Rs.");
+        int count = 3;
+        for(int i = amount.length() - 1; i >= 0; i--){
+            result.insert(0, amount.charAt(i));
+            count--;
+            if(count == 0 && i != 0){
+                result.insert(0, ",");
+                count = 2;
+            }
+        }
+        return result.toString();
     }
 }
 
@@ -447,14 +510,59 @@ class UserFunctionPanel extends JPanel{
         viewProfile.setPreferredSize(new Dimension(130, 40));
         this.add(viewProfile);
 
-        NButton logout = new NButton("Logout");
-        logout.setPreferredSize(new Dimension(130, 40));
-        this.add(logout);
-
         if(user.isAdmin){
             NButton admin = new NButton("Admin Functions");
             admin.setPreferredSize(new Dimension(130, 40));
             this.add(admin);
         }
+
+        NButton logout = new NButton("Logout");
+        logout.setPreferredSize(new Dimension(130, 40));
+        this.add(logout);
+    }
+}
+
+class AdminCommandPanel extends JPanel{
+
+    public AdminCommandPanel(){
+        super(new FlowLayout(FlowLayout.CENTER, 10, 0));
+        this.setBackground(FrameHandler.BACKGROUND_COLOR);
+        this.setPreferredSize(new Dimension(900, 60));
+
+        JLabel head = new JLabel("Admin Commands", SwingConstants.CENTER);
+        head.setPreferredSize(new Dimension(250, 100));
+        head.setBackground(InfoPanel.infoAttribColor);
+        head.setForeground(FrameHandler.HEADER_COLOR);
+        head.setOpaque(true);
+        head.setFont(new Font("Times New Roman", Font.BOLD, 25));
+        head.setBorder(BorderFactory.createRaisedSoftBevelBorder());
+        this.add(head);
+
+        JLabel empty1 = new JLabel();
+        empty1.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        empty1.setPreferredSize(new Dimension(250, 10));
+        this.add(empty1);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 20));
+        buttonPanel.setBackground(FrameHandler.BACKGROUND_COLOR);
+        buttonPanel.setPreferredSize(new Dimension(250, 300));
+
+        NButton addInsurance = new NButton("New Insurance");
+        addInsurance.setPreferredSize(new Dimension(130, 40));
+        buttonPanel.add(addInsurance);
+
+        NButton addPlaceholderInsurances = new NButton("Temp Insurances");
+        addPlaceholderInsurances.setPreferredSize(new Dimension(130, 40));
+        buttonPanel.add(addPlaceholderInsurances);
+
+        NButton viewUsers = new NButton("View Users");
+        viewUsers.setPreferredSize(new Dimension(130, 40));
+        buttonPanel.add(viewUsers);
+
+        NButton back = new NButton("Go Back");
+        back.setPreferredSize(new Dimension(130, 40));
+        buttonPanel.add(back);
+
+        this.add(buttonPanel);
     }
 }

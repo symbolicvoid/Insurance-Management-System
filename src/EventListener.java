@@ -69,6 +69,30 @@ public class EventListener implements ActionListener {
                 eventHandler.logout();
                 break;
 
+            case "Admin Functions":
+                Main.frameHandler.displayAdminFunctions();
+                break;
+
+            case "New Insurance":
+                Main.frameHandler.displayNewInsurance();
+                break;
+
+            case "Add":
+                if (allFieldsFilled()) {
+                    eventHandler.addInsurance(activeTextFields.get(0).getText(), activeTextFields.get(1).getText(),
+                            activeTextFields.get(2).getText(), activeTextFields.get(3).getText(),
+                            activeTextFields.get(4).getText());
+                } else MainFrame.logError("Please fill all fields!");
+                break;
+
+            case "Go Back":
+                deselectDetails();
+                break;
+
+            case "Cancel":
+                eventHandler.displayAllInsurances();
+                break;
+
             default:
                 MainFrame.logError("Feature not implemented yet!");
                 break;

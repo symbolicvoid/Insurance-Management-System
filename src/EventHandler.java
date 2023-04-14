@@ -3,18 +3,18 @@ import java.util.Scanner;
 
 public class EventHandler {
 
-    public static User currentUser;
-    private final UserListManager users;
-    private final InsuranceListManger ins;
+    private User currentUser;
+    private UserListManager users = null;
+    private InsuranceListManger ins = null;
     boolean userInsurancesSelected = false;
     Scanner sc;
 
     public EventHandler(){
         currentUser = null;
         sc = new Scanner(System.in);
-        users = new UserListManager();
-        ins = new InsuranceListManger();
         try{
+            users = new UserListManager();
+            ins = new InsuranceListManger();
             users.readList();
             ins.readList();
         }
@@ -49,6 +49,7 @@ public class EventHandler {
     public void logout(){
         currentUser = null;
         Main.frameHandler.displayLogin();
+        MainFrame.logMessage("Successfully logged out!");
     }
 
     public void register(String name, String pwd, String age, String gender, String contact){
@@ -146,7 +147,7 @@ public class EventHandler {
         MainFrame.logMessage("Sorting by " + attribute + "!");
         attribute = attribute.toLowerCase();
 
-        if(attribute.equals("premium")){
+        if(attribute.equals("premium") || attribute.equals("amount") || attribute.equals("duration")){
             for(int i=0; i<insurances.size(); i++){
                 for(int j=0; j<insurances.size()-1; j++){
                     if(Integer.parseInt(insurances.get(j).getAttribute(attribute)) >
@@ -191,6 +192,26 @@ public class EventHandler {
         saveData();
     }
 
+    public void addInsurance(String name, String company, String premium, String amount, String duration){
+        if(isNotNumber(premium)) {
+            MainFrame.logError("Premium must be a number!");
+            return;
+        }
+        if(isNotNumber(amount)) {
+            MainFrame.logError("Amount must be a number!");
+            return;
+        }
+        if(isNotNumber(duration)) {
+            MainFrame.logError("Duration must be a number!");
+            return;
+        }
+        Insurance newInsurance = new Insurance(ins.getNextId(), name, company, premium, amount, duration);
+        MainFrame.logMessage("New insurance added!");
+        ins.addInsurance(newInsurance);
+        saveData();
+        displayAllInsurances();
+    }
+
     public void displayUserDetails(){
         Main.frameHandler.displayUserDetails(currentUser);
     }
@@ -215,5 +236,3 @@ public class EventHandler {
         return false;
     }
 }
-
-

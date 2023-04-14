@@ -7,8 +7,13 @@ public class DatabaseHandler {
 
     String filename;
 
-    public DatabaseHandler(String _filename){
+    public DatabaseHandler(String _filename) throws Exception{
         filename = _filename;
+        File folder = new File("database");
+        if(!folder.exists()) {
+            if (!folder.mkdir())
+                throw new FileCannotBeCreatedException("Database folder is missing and cannot be created!");
+        }
     }
 
     public List readListFromFile() throws Exception {
@@ -23,13 +28,6 @@ public class DatabaseHandler {
             File newFile = new File(filename);
             if(!newFile.createNewFile())
                 throw new FileCannotBeCreatedException("Database files are missing and cannot be created!");
-        }
-        catch (IOException e){
-            File folder = new File("database");
-            if(!folder.exists()){
-                if(folder.mkdir())
-                    throw new FileCannotBeCreatedException("Database folder is missing and cannot be created!");
-            }
         }
         return null;
     }
