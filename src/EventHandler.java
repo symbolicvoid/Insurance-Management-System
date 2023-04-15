@@ -6,7 +6,7 @@ public class EventHandler {
     private User currentUser;
     private UserListManager users = null;
     private InsuranceListManger ins = null;
-    boolean userInsurancesSelected = false;
+    boolean userInsurancesSelected = false, shouldSaveFile = true;
     Scanner sc;
 
     public EventHandler(){
@@ -212,11 +212,25 @@ public class EventHandler {
         displayAllInsurances();
     }
 
+    public void displayTemporaryInsurances(){
+        shouldSaveFile = false;
+        String name = "Insurance", company = "Company", premium = "100", amount = "1000", duration = "5";
+        for(int i=1; i<=10; i++){
+            addInsurance(name + i, company + i,
+                    (Integer.parseInt(premium) * i) + "", (Integer.parseInt(amount) * i) + "",
+                    (Integer.parseInt(duration) * i) + "");
+        }
+        MainFrame.logMessage("Temporary insurances added for testing purposes. Data will NOT be saved!");
+        Main.frameHandler.displayInsuranceBrowse(ins.getList());
+    }
+
     public void displayUserDetails(){
         Main.frameHandler.displayUserDetails(currentUser);
     }
 
     private void saveData(){
+        if(!shouldSaveFile)
+            return;
         try{
             users.saveList();
             ins.saveList();

@@ -11,7 +11,12 @@ public class FrameHandler{
     public static final Color TEXT_COLOR = new Color(138, 199, 219);
     public static final Color LABEL_COLOR = new Color(87,87,92);
 
+    private static final int INSURANCE_PER_PANEL_LIMIT = 11;
+
     private JPanel browsePanel, detailPanel, userPanel;
+    private CardLayout browseCard;
+    private int pageCount, currentPage;
+    private NButton next, prev;
     ArrayList<JTextField> registerTextFields, loginTextFields, newInsuranceFields;
 
     public FrameHandler(){
@@ -120,7 +125,17 @@ public class FrameHandler{
         browseMaster.setPreferredSize(new Dimension(600, 500));
         browseMaster.add(new InfoPanel(), BorderLayout.NORTH);
 
-        browsePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,0));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.setPreferredSize(new Dimension(600, 50));
+        buttonPanel.add(prev = new NButton("Prev"));
+        buttonPanel.add(next = new NButton("Next"));
+        prev.setEnabled(false);
+        next.setEnabled(false);
+        browseMaster.add(buttonPanel, BorderLayout.SOUTH);
+
+        browseCard = new CardLayout();
+        browsePanel = new JPanel(browseCard);
         browsePanel.setBackground(BROWSE_PANEL_COLOR);
 
         browseMaster.add(browsePanel, BorderLayout.CENTER);
@@ -146,20 +161,26 @@ public class FrameHandler{
         mainFrame.getTopCard().show(mainFrame.topPanel, "none");
     }
 
-    private void putInsurancesToPanel(ArrayList<Insurance> insurances){
-        browsePanel.removeAll();
-        browsePanel.revalidate();
-        browsePanel.repaint();
+    private void putInsurancesToPanel(ArrayList<Insurance> insurances, JPanel panel){
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        panel.setBackground(BROWSE_PANEL_COLOR);
 
-        if(insurances.size() == 0){
-            MainFrame.logError("No insurances found!");
+        if(insurances.size() == 0)
             return;
-        }
 
-        int id = 1;
+        pageCount++;
+        browsePanel.add(panel, ""+pageCount);
+
+        int id = 1, counter = 1;
         for(Insurance i: insurances){
-            browsePanel.add(new InsurancePanel(id, i));
+            panel.add(new InsurancePanel((pageCount-1) * INSURANCE_PER_PANEL_LIMIT + id, i));
+            counter++;
             id++;
+            if(counter > INSURANCE_PER_PANEL_LIMIT){
+                putInsurancesToPanel(new ArrayList<>(insurances.subList(id - 1, insurances.size())),
+                        new JPanel());
+                return;
+            }
         }
     }
 
@@ -196,9 +217,37 @@ public class FrameHandler{
     }
 
     public void displayInsuranceBrowse(ArrayList<Insurance> insurances){
-        putInsurancesToPanel(insurances);
+        if(insurances.size() == 0) {
+            MainFrame.logError("No insurances found!");
+            return;
+        }
+        prev.setEnabled(false);
+        next.setEnabled(false);
+        pageCount = 0;
+        browsePanel.removeAll();
+        putInsurancesToPanel(insurances, new JPanel());
         mainFrame.getMiddleCard().show(mainFrame.middlePanel, "browse");
+        currentPage = 1;
+        browseCard.show(browsePanel, "1");
+        if(pageCount > 1)
+            next.setEnabled(true);
         browsePanel.validate();
+    }
+
+    public void nextBrowsePage(){
+        browseCard.next(browsePanel);
+        currentPage++;
+        if(currentPage == pageCount)
+            next.setEnabled(false);
+        prev.setEnabled(true);
+    }
+
+    public void prevBrowsePage(){
+        browseCard.previous(browsePanel);
+        currentPage--;
+        if(currentPage == 1)
+            prev.setEnabled(false);
+        next.setEnabled(true);
     }
 
     public void displayUserFunctions(User currentUser){

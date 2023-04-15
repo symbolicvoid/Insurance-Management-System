@@ -20,7 +20,6 @@ public class EventListener implements ActionListener {
         return true;
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
 
         MainFrame.clearLog();
@@ -75,6 +74,18 @@ public class EventListener implements ActionListener {
 
             case "New Insurance":
                 Main.frameHandler.displayNewInsurance();
+                break;
+
+            case "Temp Insurances":
+                eventHandler.displayTemporaryInsurances();
+                break;
+
+            case "Next":
+                Main.frameHandler.nextBrowsePage();
+                break;
+
+            case "Prev":
+                Main.frameHandler.prevBrowsePage();
                 break;
 
             case "Add":
