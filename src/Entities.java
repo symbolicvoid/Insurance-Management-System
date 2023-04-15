@@ -1,7 +1,7 @@
-import dbmanager.StoredObj;
+import dbmanager.StoredObject;
 import java.util.ArrayList;
 
-class User extends StoredObj{
+class User extends StoredObject {
 
     private final ArrayList<Integer> insuranceIDs;
     public boolean isAdmin;
@@ -43,7 +43,7 @@ class User extends StoredObj{
 
 }
 
-class Insurance extends StoredObj{
+class Insurance extends StoredObject {
 
     public Insurance(int id, String name, String company, String premium, String amount, String duration) {
         super(id);

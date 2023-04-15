@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public abstract class StoredObj implements Serializable {
+public abstract class StoredObject implements Serializable {
 
     int primaryKey;
     protected Dictionary<String, String> attributes = new Hashtable<>();
 
-    public StoredObj(int key){
+    public StoredObject(int key){
         primaryKey = key;
     }
 
