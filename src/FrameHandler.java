@@ -217,6 +217,7 @@ public class FrameHandler{
     }
 
     public void displayInsuranceBrowse(ArrayList<Insurance> insurances){
+        mainFrame.getMiddleCard().show(mainFrame.middlePanel, "browse");
         if(insurances.size() == 0) {
             MainFrame.logError("No insurances found!");
             return;
@@ -226,7 +227,6 @@ public class FrameHandler{
         pageCount = 0;
         browsePanel.removeAll();
         putInsurancesToPanel(insurances, new JPanel());
-        mainFrame.getMiddleCard().show(mainFrame.middlePanel, "browse");
         currentPage = 1;
         browseCard.show(browsePanel, "1");
         if(pageCount > 1)
