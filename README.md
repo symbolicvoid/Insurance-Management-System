@@ -1,21 +1,21 @@
 # Insurance Management System
-Insurance Management System made for my College project using Java and Swing. It does not use SQL to store data, instead storing data as a serialized list of objects in a file. 
+Insurance Management System made for my College project using Java and Swing. It does not use SQL to store data, instead storing data as a serialized list of objects in a file. This is my first big Java project.
 
 ## Functionalities
 
 ### User:
-* Login/Register/Logout
-* View/Edit Profile
-* Browse Insurances
-* Sort Insurances by Price/Name/Company/Amount/Duration
-* Buy/Remove Insurances
-* Swap between purchased and available insurances
+* Login/Register/Logout.
+* View/Edit Profile.
+* Browse Insurances.
+* Sort Insurances by Price/Name/Company/Amount/Duration.
+* Buy/Remove Insurances.
+* Swap between purchased and available insurances.
 
 ### Admin:
 * Register - The first account with user id 0 is always the admin account. In case this is the first time the program is running or a new database had to be created, the first user registered will be the admin.
-* Normal User Functionalities
-* Add/Edit/Delete Insurances
-* Temporary Insurances
+* Normal User Functionalities.
+* Add/Edit/Delete Insurances.
+* Temporary Insurances.
 
 ### System:
 * Maintaining and creating database files.
@@ -37,11 +37,11 @@ Insurance Management System made for my College project using Java and Swing. It
 
 ## Files:
 * `src/` - Source code
-    * `dbmanager` - Package which contains the classes that manage the database
+    * `dbmanager` - Package which contains the classes that manage the database.
         * `DatabaseHandler.java` - Class that manages storing and retrieving of data and creation of the database files if required.
         * `StoredObject.java` - Abstract Class that all objects that are to be stored in the database must extend.
     * `Main.java` - Main class that runs the program. Executed only once.
-    * `EventHandler.java` - Class that handles events listened by the EventListener. Only class with access to `ListManager` and is invoked by `EventListener`
+    * `EventHandler.java` - Class that handles events listened by the EventListener. Only class with access to `ListManager` and is invoked by `EventListener`.
     * `EventListener.java` - Class that listens to events and invokes `EventHandler` or `FrameHandler` when required. It also receives events from other `ActionListener` classes and processes them.
     * `FrameHandler.java` - Class that handles the creation and display of panels on the frame. It is invoked by `EventHandler` and `EventListener`. Responsible for all the GUI in the project.
     * `Components.java` - Various Classes of custom panels and other swing components used by `FrameHandler` to display data from `EventHandler` as GUI.
