@@ -80,6 +80,10 @@ public class EventListener implements ActionListener {
                 eventHandler.displayTemporaryInsurances();
                 break;
 
+            case "View Users":
+                eventHandler.displayAllUsers();
+                break;
+
             case "Next":
                 Main.frameHandler.nextBrowsePage();
                 break;
@@ -110,9 +114,10 @@ public class EventListener implements ActionListener {
         }
     }
 
-    public void infoLabelClicked(String attribute){
+    public void infoLabelClicked(String attribute, boolean insuranceSelected){
         MainFrame.clearLog();
-        eventHandler.displaySortedInsurances(attribute);
+        if(insuranceSelected)
+            eventHandler.displaySortedInsurances(attribute);
     }
 
     public void insuranceSelected(int id){
@@ -144,5 +149,10 @@ public class EventListener implements ActionListener {
                     activeTextFields.get(2).getText(), activeTextFields.get(3).getText());
         else
             MainFrame.logError("Please fill all fields!");
+    }
+
+    public void userSelected(int id){
+        MainFrame.clearLog();
+        eventHandler.displayUserDetails(id);
     }
 }

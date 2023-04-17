@@ -228,6 +228,14 @@ public class EventHandler {
         Main.frameHandler.displayUserDetails(currentUser);
     }
 
+    public void displayAllUsers(){
+        Main.frameHandler.displayUserBrowse(users.getList());
+    }
+
+    public void displayUserDetails(int id){
+        Main.frameHandler.displayUserDetails(users.findUser(id));
+    }
+
     private void saveData(){
         if(!shouldSaveFile)
             return;

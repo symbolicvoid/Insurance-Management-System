@@ -211,28 +211,22 @@ class InsurancePanel extends JPanel implements MouseListener{
     public void mouseExited(MouseEvent e) {}
 }
 
-class InfoPanel extends JPanel implements MouseListener {
-    public static Color infoAttribColor = new Color(67,67,75);
+class LabelPanel extends JPanel implements MouseListener {
+    public static Color infoAttribColor = new Color(67, 67, 75);
+    private boolean insuranceSelected = false;
     JLabel id, l1, l2, l3, l4, l5;
 
-    InfoPanel(){
+    LabelPanel() {
         super(new FlowLayout(FlowLayout.CENTER, 0, 0));
         this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
         this.setPreferredSize(new Dimension(625, 45));
 
-        id = new JLabel("ID", SwingConstants.CENTER);
-        l1 = new JLabel("Name", SwingConstants.CENTER);
-        l2 = new JLabel("Company", SwingConstants.CENTER);
-        l3 = new JLabel("Premium", SwingConstants.CENTER);
-        l4 = new JLabel("Amount", SwingConstants.CENTER);
-        l5 = new JLabel("Duration", SwingConstants.CENTER);
-
-        id.setPreferredSize(new Dimension(25, 40));
-        l1.setPreferredSize(new Dimension(225, 40));
-        l2.setPreferredSize(new Dimension(75, 40));
-        l3.setPreferredSize(new Dimension(100,40));
-        l4.setPreferredSize(new Dimension(125,40));
-        l5.setPreferredSize(new Dimension(75, 40));
+        id = new JLabel(" ", SwingConstants.CENTER);
+        l1 = new JLabel(" ", SwingConstants.CENTER);
+        l2 = new JLabel(" ", SwingConstants.CENTER);
+        l3 = new JLabel(" ", SwingConstants.CENTER);
+        l4 = new JLabel(" ", SwingConstants.CENTER);
+        l5 = new JLabel(" ", SwingConstants.CENTER);
 
         labelInit(id);
         labelInit(l1);
@@ -242,23 +236,16 @@ class InfoPanel extends JPanel implements MouseListener {
         labelInit(l5);
     }
 
-    InfoPanel(boolean isAdminRequest){
-        super(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    public void setUserLabels(){
 
-        if(!isAdminRequest) {
-            MainFrame.logError("Only admins can access this!");
-            return;
-        }
+        insuranceSelected = false;
 
-        this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
-        this.setPreferredSize(new Dimension(625, 45));
-
-        id = new JLabel("ID", SwingConstants.CENTER);
-        l1 = new JLabel("Name", SwingConstants.CENTER);
-        l2 = new JLabel("Age", SwingConstants.CENTER);
-        l3 = new JLabel("Gender", SwingConstants.CENTER);
-        l4 = new JLabel("Contact", SwingConstants.CENTER);
-        l5 = new JLabel("Admin", SwingConstants.CENTER);
+        id.setText("UID");
+        l1.setText("Name");
+        l2.setText("Age");
+        l3.setText("Gender");
+        l4.setText("Contact");
+        l5.setText("Admin");
 
         id.setPreferredSize(new Dimension(25, 40));
         l1.setPreferredSize(new Dimension(250, 40));
@@ -266,13 +253,25 @@ class InfoPanel extends JPanel implements MouseListener {
         l3.setPreferredSize(new Dimension(75,40));
         l4.setPreferredSize(new Dimension(125,40));
         l5.setPreferredSize(new Dimension(100, 40));
+    }
 
-        labelInit(id);
-        labelInit(l1);
-        labelInit(l2);
-        labelInit(l3);
-        labelInit(l4);
-        labelInit(l5);
+    public void setInsuranceLabels(){
+
+        insuranceSelected = true;
+
+        id.setText("ID");
+        l1.setText("Name");
+        l2.setText("Company");
+        l3.setText("Premium");
+        l4.setText("Amount");
+        l5.setText("Duration");
+
+        id.setPreferredSize(new Dimension(25, 40));
+        l1.setPreferredSize(new Dimension(225, 40));
+        l2.setPreferredSize(new Dimension(75, 40));
+        l3.setPreferredSize(new Dimension(100, 40));
+        l4.setPreferredSize(new Dimension(125, 40));
+        l5.setPreferredSize(new Dimension(75, 40));
     }
 
     private void labelInit(JLabel label){
@@ -288,7 +287,7 @@ class InfoPanel extends JPanel implements MouseListener {
 
     public void mouseClicked(MouseEvent e) {
         JLabel label = (JLabel) e.getSource();
-        Main.eventListener.infoLabelClicked(label.getText());
+        Main.eventListener.infoLabelClicked(label.getText(), insuranceSelected);
     }
 
     public void mousePressed(MouseEvent e) {}
@@ -316,7 +315,7 @@ class InsuranceDetailsPanel extends JPanel implements ActionListener{
 
         head = new JLabel(insurance.getAttribute("name"), SwingConstants.CENTER);
         head.setPreferredSize(new Dimension(250, 100));
-        head.setBackground(InfoPanel.infoAttribColor);
+        head.setBackground(LabelPanel.infoAttribColor);
         head.setForeground(FrameHandler.HEADER_COLOR);
         head.setOpaque(true);
         head.setFont(new Font("Times New Roman", Font.BOLD, 15));
@@ -423,7 +422,7 @@ class UserDetailsPanel extends JPanel implements ActionListener{
 
         JLabel head = new JLabel("User ID: " + id, SwingConstants.CENTER);
         head.setPreferredSize(new Dimension(250, 100));
-        head.setBackground(InfoPanel.infoAttribColor);
+        head.setBackground(LabelPanel.infoAttribColor);
         head.setForeground(FrameHandler.HEADER_COLOR);
         head.setOpaque(true);
         head.setFont(new Font("Times New Roman", Font.BOLD, 25));
@@ -531,7 +530,7 @@ class AdminCommandPanel extends JPanel{
 
         JLabel head = new JLabel("Admin Commands", SwingConstants.CENTER);
         head.setPreferredSize(new Dimension(250, 100));
-        head.setBackground(InfoPanel.infoAttribColor);
+        head.setBackground(LabelPanel.infoAttribColor);
         head.setForeground(FrameHandler.HEADER_COLOR);
         head.setOpaque(true);
         head.setFont(new Font("Times New Roman", Font.BOLD, 25));
@@ -565,4 +564,81 @@ class AdminCommandPanel extends JPanel{
 
         this.add(buttonPanel);
     }
+}
+
+class UserPanel extends JPanel implements MouseListener{
+
+    int userID;
+    JLabel id, name, age, gender, contact, admin;
+
+    UserPanel(User user){
+        super(new FlowLayout(FlowLayout.CENTER,0,0));
+        this.setBackground(FrameHandler.BROWSE_PANEL_COLOR);
+        this.setPreferredSize(new Dimension(625, 28));
+
+        userID = user.getKey();
+
+        name = new JLabel(user.getAttribute("name"), SwingConstants.CENTER);
+        age = new JLabel(user.getAttribute("age"), SwingConstants.CENTER);
+        gender = new JLabel(user.getAttribute("gender"), SwingConstants.CENTER);
+        contact = new JLabel(processPhoneNumber(user.getAttribute("contact")), SwingConstants.CENTER);
+        admin = new JLabel(String.valueOf(user.isAdmin), SwingConstants.CENTER);
+        id = new JLabel(user.getKey()+"", SwingConstants.CENTER);
+
+        id.setPreferredSize(new Dimension(25, 25));
+        name.setPreferredSize(new Dimension(250, 25));
+        age.setPreferredSize(new Dimension(50,25));
+        gender.setPreferredSize(new Dimension(75,25));
+        contact.setPreferredSize(new Dimension(125, 25));
+        admin.setPreferredSize(new Dimension(100, 25));
+
+        name.addMouseListener(this);
+        name.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        labelInit(id);
+        labelInit(name);
+        labelInit(age);
+        labelInit(gender);
+        labelInit(contact);
+        labelInit(admin);
+    }
+
+    private void labelInit(JLabel label){
+        label.setBackground(FrameHandler.LABEL_COLOR);
+        label.setForeground(FrameHandler.TEXT_COLOR);
+        label.setOpaque(true);
+        label.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, FrameHandler.BROWSE_PANEL_COLOR));
+        this.add(label);
+    }
+
+    private String processPhoneNumber(String number){
+        StringBuilder result = new StringBuilder();
+        int count = 4;
+        for(int i = number.length() - 1; i >= 0; i--){
+            result.insert(0, number.charAt(i));
+            count--;
+            if(count == 0 && i != 0){
+                result.insert(0, "-");
+                count = 3;
+            }
+        }
+        return result.toString();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Main.eventListener.userSelected(userID);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
 }
